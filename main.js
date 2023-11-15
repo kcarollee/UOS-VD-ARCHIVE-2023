@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+
 function map(value, min1, max1, min2, max2) {
 	return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
@@ -20,46 +21,64 @@ function main(){
 	const near = 0.1;
 	const far = 1000;
 	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-	
+	camera.position.set(0, 0, 20);
+
+	// RAYCASTER
+	const raycaster = new THREE.Raycaster();
+	const pointer = new THREE.Vector2();
+	pointer.x = ( window.clientX / window.innerWidth ) * 2 - 1;
+	pointer.y = - ( window.clientY / window.innerHeight ) * 2 + 1;
 	
 
 	// CONTROLS
 	const controls = new OrbitControls( camera, renderer.domElement );
-	camera.position.set(0, 0, 20);
+	controls.enableDamping = true;
+	controls.dampingFactor = 0.05;
+	controls.screenSpacePanning = false;
 	controls.update();
 
 	// SCENE
 	const scene = new THREE.Scene();
-	scene.background = new THREE.Color(0xCCCCCC);
+	scene.background = new THREE.Color(0xFFFFFF);
 	renderer.render(scene, camera);
 
+	// TEXTURES
+	const textureLoader = new THREE.TextureLoader();
+	const textureNum = 24;
+	const spriteTextureArr = [];
+	for (let i = 0; i < textureNum; i++){
+		let url = "./assets/sprites/sprite (" + (i + 1).toString() + ").png";
+		let textureTemp = textureLoader.load(url);
+		spriteTextureArr.push(textureTemp); 
+	}
+	
 	// GEOMETRY & MESH
-	const instanceNum = 30;
+	const instanceNum = 24;
 	const sphereGeom = new THREE.SphereGeometry(3, 50, 50);
-	const sphereMat = new THREE.MeshBasicMaterial();
-	const spheresInstancedMesh = new THREE.InstancedMesh(sphereGeom, sphereMat, instanceNum);
-
-	const matrix = new THREE.Matrix4();
+	// const sphereMat = new THREE.MeshBasicMaterial();
+	
+	
 	const posRange = 10;
 	const color = new THREE.Color();
 
-	const sphereProxy = new THREE.Object3D();
+
+	// SPRTIES VER
+	const spritesArr = [];
 	for (let i = 0; i < instanceNum; i++){
 		let x = map(Math.random(), 0, 1, -posRange, posRange);
 		let y = map(Math.random(), 0, 1, -posRange, posRange);
 		let z = map(Math.random(), 0, 1, -posRange, posRange);
 
-		let scaleCoef = map(Math.random(), 0, 1, 0.8, 1.2);
-		sphereProxy.position.set(x, y, z);
-		sphereProxy.scale.setScalar(scaleCoef);
-		sphereProxy.updateMatrix();
-
-		spheresInstancedMesh.setMatrixAt(i, sphereProxy.matrix);
-		spheresInstancedMesh.setColorAt(i, color.setHex(map(Math.random(), 0, 1, 0.5, 1.0) * 0xFFFFFF));
+		let scaleCoef = map(Math.random(), 0, 1, 5,  5);
+		let tempSpriteMaterial= new THREE.SpriteMaterial({map: spriteTextureArr[i]});
+		let sprite = new THREE.Sprite(tempSpriteMaterial);
+		sprite.position.set(x, y, z);
+		sprite.scale.set(scaleCoef, scaleCoef);
+		spritesArr.push(sprite);
+		scene.add(sprite);
 	}
 
-	scene.add(spheresInstancedMesh);
-	
+
 
 	
 	// GUI
@@ -83,6 +102,9 @@ function main(){
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			camera.updateProjectionMatrix();
 		}
+
+		raycaster.setFromCamera( pointer, camera );
+		updateRaycaster();
 		renderer.render(scene, camera);
 		requestAnimationFrame(render);
 	}
@@ -99,6 +121,43 @@ function main(){
 		return needResize;
 	}
 	requestAnimationFrame(render);
+
+	function onPointerMove( event ) {
+
+		// calculate pointer position in normalized device coordinates
+		// (-1 to +1) for both components
+	
+		pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	
+	}
+
+
+	window.addEventListener( 'pointermove', onPointerMove );
+
+	let intersects;
+	function updateRaycaster(){
+		// calculate objects intersecting the picking ray
+		intersects = raycaster.intersectObjects( scene.children );
+		if (intersects.length > 0){
+			let firstIntersectMesh = intersects[0].object;
+			//console.log(firstIntersectMesh.name)
+		}
+	}
+
+	function onPointerDown( event ){
+		if (intersects.length > 0){
+			let firstIntersectMesh = intersects[0].object;
+			window.open('./students/student_1/index.html', '_self');
+			controls.enabled = false;
+		}
+	}
+	window.addEventListener('pointerdown', onPointerDown);
+
+	function onPointerUp(event){
+		controls.enabled = true;
+	}
+	window.addEventListener('pointerup', onPointerUp);
 }
 
 main();
