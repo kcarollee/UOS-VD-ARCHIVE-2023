@@ -160,6 +160,9 @@ async function main(){
 			await sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
 			bgBorderPic = await sketch.loadImage("./assets/graphic elements/bgBorderTop.png", sketch.getImage);
 			console.log(bgBorderPic.width);
+
+			// check for mobile
+			sketch.checkForMobile();
 		};
 	  
 		sketch.draw = async () => {
@@ -187,6 +190,14 @@ async function main(){
 		sketch.getImage = (i) => {
 			sketch.image(i, 0, 0);
 		};
+
+		sketch.checkForMobile = () =>{
+			let isMobile = /iPhone|iPad|iPod|Android/i.test(window.navigator.userAgent);
+			if (isMobile){
+			  sketch.pixelDensity(1);
+			}
+			
+		  }
 	}
 	p5Canvas = new p5(p5Sketch);
 	
@@ -349,7 +360,7 @@ async function main(){
 
 	function render(time){
 		if (p5Canvas.canvas != undefined && !p5CanvasLoadedFlag) {
-			//p5Canvas.canvas.style.display = "none";
+			p5Canvas.canvas.style.display = "none";
 			p5Texture = new THREE.CanvasTexture(p5Canvas.canvas);
 			p5Texture.needsUpdate = true;
 			
