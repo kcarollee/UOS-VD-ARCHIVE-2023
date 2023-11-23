@@ -154,28 +154,84 @@ async function main(){
 	let p5Texture, p5Canvas;
 	let p5CanvasLoadedFlag = false;
   	let p5LoopStarted = false;
+	
+	
 	const p5Sketch = (sketch) => {
 		let bgBorderPic;
+		let bgPic;
+		let mouseLerp = [-10000, -10000];
+		let mouseLerpSet = false;
+		let mouseLerpCoef = 0.01
+		let curPosX, curPosY;
 		sketch.setup = async () => {
 			await sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
-			bgBorderPic = await sketch.loadImage("./assets/graphic elements/bgBorderTop.png", sketch.getImage);
-			console.log(bgBorderPic.width);
-
+			//bgBorderPic = await sketch.loadImage("./assets/graphic elements/bgBorderTop.png", sketch.getImage);
+			bgPic = await sketch.loadImage("./assets/graphic elements/bgNoisy.png", sketch.getImage);
+			//bgPic = null;
 			// check for mobile
 			sketch.checkForMobile();
+			sketch.imageMode(sketch.CENTER);
+			sketch.background(bgColorArr[curBgColorIndex]);
 		};
 	  
 		sketch.draw = async () => {
 			try {
+				sketch.background(bgColorArr[curBgColorIndex]);
+				
 				p5LoopStarted = true;
-				sketch.background(255);
+				// first time logo is clicked
+				if (logoClickCount == 1){
+					if (logoClicked){
+						//bgPic = await sketch.loadImage("./assets/graphic elements/bgNoisy.png", sketch.getImage);
+						//console.log(mouseLerp);
+						logoClicked = false;
+					}
+					if (bgPic != null) {
+						if (bgPic.width != 1 && !mouseLerpSet){
+							mouseLerp = [bgPic.width, bgPic.height];
+							//console.log(bgPic.width)
+							mouseLerpSet = true;
+						}
+						if (bgPic.width != 1) sketch.image(bgPic, mouseLerp[0], mouseLerp[1], bgPic.width * 1, bgPic.height * 1);
+						curPosX = mouseLerp[0];
+						curPosY = mouseLerp[1];
+						mouseLerp[0] = sketch.lerp(mouseLerp[0], sketch.mouseX, mouseLerpCoef);
+						mouseLerp[1] = sketch.lerp(mouseLerp[1], sketch.mouseY, mouseLerpCoef);
+					}
+				}
+				else {
+					
+					let mode = logoClickCount % 2;
+					//console.log(mode == 1);
+					
+					if (mode == 0){
+						sketch.image(bgPic, curPosX, curPosY, bgPic.width * 1, bgPic.height * 1);
+						curPosX = sketch.lerp(curPosX, -bgPic.width, mouseLerpCoef);
+						curPosY = sketch.lerp(curPosY, -bgPic.height, mouseLerpCoef);
+					}
+					else if (mode == 1) {
+						sketch.image(bgPic, curPosX, curPosY, bgPic.width * 1, bgPic.height * 1);
+						curPosX = sketch.lerp(curPosX, sketch.mouseX, mouseLerpCoef);
+						curPosY = sketch.lerp(curPosY, sketch.mouseY, mouseLerpCoef);
+						// sketch.image(bgPic, 0, 0, bgPic.width * 1, bgPic.height * 1);
+						//console.log("HERE2");
+					}
+					
+				}
+				
+				
 				// DRAW
-				sketch.image(bgBorderPic, (sketch.frameCount * 1.5) % sketch.windowWidth, 3);
-				sketch.image(bgBorderPic, (sketch.frameCount * 1.5) % sketch.windowWidth - bgBorderPic.width, 3);
+				// sketch.image(bgBorderPic, (sketch.frameCount * 1.5) % sketch.windowWidth, 3);
+				// sketch.image(bgBorderPic, (sketch.frameCount * 1.5) % sketch.windowWidth - bgBorderPic.width, 3);
+
+				// sketch.image(bgBorderPic, (sketch.frameCount * 1.5) % sketch.windowWidth, sketch.windowHeight - bgBorderPic.height);
+				// sketch.image(bgBorderPic, (sketch.frameCount * 1.5) % sketch.windowWidth - bgBorderPic.width, sketch.windowHeight - bgBorderPic.height);
 			} catch {}
 			if (p5Texture && p5LoopStarted) {
 				p5Texture.needsUpdate = true;
 			}
+
+			
 		};
 
 		sketch.windowResized = async () => {
@@ -247,7 +303,7 @@ async function main(){
 	const textureLoader = new THREE.TextureLoader();
 	const loadingManager = new THREE.LoadingManager();
 	
-	const textureNum = 23;
+	const textureNum = 24;
 	const spriteTextureArr = [];
 	for (let i = 0; i < textureNum; i++){
 		let url = "./assets/sprites/sprite (" + (i + 1).toString() + ").png";
@@ -263,7 +319,7 @@ async function main(){
 		faceTextureArr.push(textureTemp); 
 	}
 	
-	const instanceNum = 23;
+	const instanceNum = 24;
 	const posRange = 10;
 	// SPRTIES VER
 	const spritesArr = [];
@@ -286,7 +342,7 @@ async function main(){
 			new THREE.Vector3(x, y, z), 
 			spriteTextureArr[i],
 			faceTextureArr[i],
-			'./students/student_1/index.html',
+			'./students/student_' + (i + 1) + '/index.html',
 			i,
 			scaleCoef
 		);
@@ -326,8 +382,9 @@ async function main(){
 				let cam = controls.object;
 				// get camera's world position
 				let campPos = cam.position;
+				// since the scene is rotating, we need to get the world position of the sprites
 				// the lookAt point for each of the sprite should be a positionVec + camPos, and not jsut camPos 
-				let lookAtVec = hyperlinkSprite.sprite.position.clone().add(campPos);
+				let lookAtVec = scene.localToWorld(hyperlinkSprite.sprite.position.clone()).add(campPos);
 				hyperlinkSprite.sprite.lookAt(lookAtVec);
 
 				// bring the sprite's position to camera's local space and normalized the vector
@@ -373,7 +430,8 @@ async function main(){
 		time *= 0.001;
 		controls.update();
 		pointerLerp.lerp(pointer, 0.025);
-		
+		scene.rotateX(0.001);
+		scene.rotateY(0.001);
 		
 		spriteAnimationHandler(time);
 		
@@ -427,7 +485,11 @@ async function main(){
 		intersects = raycaster.intersectObjects( scene.children );
 		if (intersects.length > 0){
 			let firstIntersectSprite = intersects[0].object;
+			document.body.style.cursor = 'pointer';
 			//console.log(firstIntersectSprite.name);
+		}
+		else {
+			if (!mouseIsInLogo) document.body.style.cursor = 'default';
 		}
 	}
 
