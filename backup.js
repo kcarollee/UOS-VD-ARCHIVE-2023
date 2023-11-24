@@ -61,10 +61,6 @@ class HyperlinkSprite{
 
 	}
 
-	setNewDestPos(newDestPosVec){
-		this.destPosVec.copy(newDestPosVec);
-	}
-
 	clickAnimationZoom(){
 		// move sprite to center
 		if (this.centerTranslationTriggered){
@@ -106,7 +102,7 @@ class HyperlinkSprite{
 			
 		}
 
-		/*
+		
 		if (this.scaleDownTriggered){
 			this.scale += (this.scaleBeforeClickTriggered - this.scale) * this.scaleDownClock.getElapsedTime() * 0.05;
 			this.sprite.scale.set(this.scale, this.scale);
@@ -128,7 +124,7 @@ class HyperlinkSprite{
 				HyperlinkSprite.opacityClock.stop();
 			}
 		}
-		*/
+		
 		
 		
 
@@ -153,14 +149,13 @@ function map(value, min1, max1, min2, max2) {
 }
 
 async function main(){
-	// MOBILE CHECK
-	let isMobile = /iPhone|iPad|iPod|Android/i.test(window.navigator.userAgent);
-	// P5 SKETCH
+	/*
+	// P5 SKETCH	
 	let p5Texture, p5Canvas;
 	let p5CanvasLoadedFlag = false;
   	let p5LoopStarted = false;
-	let bgPicLoaded = false;
-	let imageLoading = true;
+	
+	
 	const p5Sketch = (sketch) => {
 		let bgBorderPic;
 		let bgPic;
@@ -168,13 +163,10 @@ async function main(){
 		let mouseLerpSet = false;
 		let mouseLerpCoef = 0.01
 		let curPosX, curPosY;
-		
 		sketch.setup = async () => {
-			sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
+			await sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
 			//bgBorderPic = await sketch.loadImage("./assets/graphic elements/bgBorderTop.png", sketch.getImage);
-			//bgPic = sketch.loadImage("./assets/graphic elements/bgNoisy.png", sketch.getImage);
-			//console.log(bgPic.canvas.style.display = 'none');
-			//bgPic.resize(0, 0);
+			bgPic = await sketch.loadImage("./assets/graphic elements/bgNoisy.png", sketch.getImage);
 			//bgPic = null;
 			// check for mobile
 			sketch.checkForMobile();
@@ -190,7 +182,7 @@ async function main(){
 				// first time logo is clicked
 				if (logoClickCount == 1){
 					if (logoClicked){
-						bgPic = await sketch.loadImage("./assets/graphic elements/bgNoisyCompressed.png", sketch.getImage);
+						//bgPic = await sketch.loadImage("./assets/graphic elements/bgNoisy.png", sketch.getImage);
 						//console.log(mouseLerp);
 						logoClicked = false;
 					}
@@ -200,11 +192,7 @@ async function main(){
 							//console.log(bgPic.width)
 							mouseLerpSet = true;
 						}
-						if (bgPic.width != 1) {
-							sketch.image(bgPic, mouseLerp[0], mouseLerp[1], bgPic.width * 1, bgPic.height * 1);
-							imageLoading = false;
-						}
-						else imageLoading = true;
+						if (bgPic.width != 1) sketch.image(bgPic, mouseLerp[0], mouseLerp[1], bgPic.width * 1, bgPic.height * 1);
 						curPosX = mouseLerp[0];
 						curPosY = mouseLerp[1];
 						mouseLerp[0] = sketch.lerp(mouseLerp[0], sketch.mouseX, mouseLerpCoef);
@@ -265,11 +253,11 @@ async function main(){
 			  sketch.pixelDensity(1);
 			}
 			
-		}
+		  }
 	}
 	p5Canvas = new p5(p5Sketch);
 	
-	
+	*/
 
 	// THREEJS CANVAS & RENDERER
 	const canvas = document.querySelector('#c');
@@ -308,7 +296,7 @@ async function main(){
 
 	// SCENE
 	const scene = new THREE.Scene();
-	scene.background = new THREE.Color(0xFFFFFF);
+	//scene.background = new THREE.Color(0xFFFFFF);
 	renderer.render(scene, camera);
 
 	// TEXTURES
@@ -330,8 +318,39 @@ async function main(){
 		let textureTemp = textureLoader.load(url);
 		faceTextureArr.push(textureTemp); 
 	}
+
+	// BACKGROUND RENDER BUFFER
+	// 5396 x 4137
+	let defaultWidth = 5396;
+	let defaultHeight = 4137;
+	let bgScaleCoef = 0.01;
+	const bgTexture = textureLoader.load("./assets/graphic elements/bgNoisy.png");
+	const bgRenderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight);
+	const bgCamera = camera.clone();
+	const bgScene = new THREE.Scene();
+	bgScene.background = new THREE.Color(0x7a33ff);
+
+	// BACKGROUND RECT
+	const rectGeom = new THREE.PlaneGeometry(defaultWidth * bgScaleCoef, defaultHeight * bgScaleCoef);
+	const rectMat = new THREE.MeshBasicMaterial({map: bgTexture, alphaTest: 0.5});
+	const rectMesh = new THREE.Mesh(rectGeom, rectMat);
+
+	// dummy rect
+	const dummyRectMesh = new THREE.Mesh(rectGeom, new THREE.MeshBasicMaterial({opacity: 0.0, transparent:true}));
+	dummyRectMesh.position.set(0, 0, 0.1);
+	dummyRectMesh.name = 'dummy';
+	bgScene.add(rectMesh);
+	bgScene.add(dummyRectMesh)
+	// console.log(bgScene)
+	bgScene.background.set(0x7a33ff);
+
+	// BG RAYCASTER
+	const bgRaycaster = new THREE.Raycaster();
+	const bgPointerLerp = new THREE.Vector2(0, 0);
+
+
 	
-	// SPRTIES VER
+	// INITIALIZE SPRITES
 	const instanceNum = 24;
 	const posRange = 10;
 	const spritesArr = [];
@@ -401,12 +420,11 @@ async function main(){
 
 				// bring the sprite's position to camera's local space and normalized the vector
 				let normalizedSpriteScreenPosition = cam.worldToLocal(hyperlinkSprite.sprite.position.clone().normalize());
-				// don't forget to normalize the pointer vector as well!!!
-				let normalizedDirectionVec = pointerLerp.clone().normalize().sub(normalizedSpriteScreenPosition).normalize();
+				
+				let normalizedDirectionVec = pointerLerp.clone().sub(normalizedSpriteScreenPosition).normalize();
 				let directionVec = normalizedDirectionVec.multiplyScalar(0.25);
 				hyperlinkSprite.face.position.set(directionVec.x, directionVec.y, 0.001);
 				
-				//console.log(normalizedDirectionVec);
 				// if clickedSprite gets defined upon mouse click
 				if (clickedSprite != undefined){
 					// if the clicked sprite is moving to center
@@ -429,24 +447,27 @@ async function main(){
 
 
 	function render(time){
+		/*
 		if (p5Canvas.canvas != undefined && !p5CanvasLoadedFlag) {
 			p5Canvas.canvas.style.display = "none";
 			p5Texture = new THREE.CanvasTexture(p5Canvas.canvas);
 			p5Texture.needsUpdate = true;
 			
 			p5CanvasLoadedFlag = true;
+	  
+			//scene.background = p5Texture;
+			//console.log("HEY");
 		}
-		if (imageLoading) scene.background.set(0x7A33FF);
-		else scene.background = p5Texture;
-		  //console.log("HEY");
-		  //console.log(imageLoading);
+		*/
+		//console.log(bgScene.background)
+		scene.background = bgRenderTarget.texture;
+		
 		time *= 0.001;
 		controls.update();
-		pointerLerp.lerp(pointer, 0.01);
+		pointerLerp.lerp(pointer, 0.025);
 		scene.rotateX(0.001);
 		scene.rotateY(0.001);
-		
-		
+		console.log(bgCamera.position)
 		spriteAnimationHandler(time);
 		
 		if (resizeRenderToDisplaySize(renderer)){
@@ -459,14 +480,31 @@ async function main(){
 			camera.top = frustumSize / 2;
 			camera.bottom = - frustumSize / 2;
 			camera.updateProjectionMatrix();
+
+			bgCamera.copy(camera)
+			bgCamera.aspect = canvas.clientWidth / canvas.clientHeight;
+			bgCamera.updateProjectionMatrix();
 		}
 
-		
-		if (!isMobile) {
-			raycaster.setFromCamera( pointer, camera );
-			updateRaycaster();
-		}
+		raycaster.setFromCamera( pointer, camera );
+		bgRaycaster.setFromCamera(pointer, bgCamera);
+		updateRaycaster();
+
+		renderer.setRenderTarget(null);
+		renderer.clear();
 		renderer.render(scene, camera);
+
+		rectMesh.position.set(pointer.x, pointer.y);
+		if (bgIntersects.length > 0){
+			let dummyMeshPos = bgIntersects[0].object.position;
+			rectMesh.position.copy(dummyMeshPos);
+		}
+
+		renderer.setRenderTarget(bgRenderTarget);
+		renderer.clear();
+		renderer.render(bgScene, bgCamera);
+		
+
 		requestAnimationFrame(render);
 	}
 
@@ -478,6 +516,7 @@ async function main(){
 		const needResize = canvas.width !== width || canvas.height !== height;
 		if (needResize){
 			renderer.setSize(width, height, false);
+			bgRenderTarget.setSize(width, height, false);
 		}
 		return needResize;
 	}
@@ -490,13 +529,13 @@ async function main(){
 	
 		pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-		console.log(pointer)
+	
 	}
 
 
 	window.addEventListener( 'pointermove', onPointerMove );
 
-	let intersects;
+	let intersects, bgIntersects;
 	function updateRaycaster(){
 		// calculate objects intersecting the picking ray
 		intersects = raycaster.intersectObjects( scene.children );
@@ -508,22 +547,16 @@ async function main(){
 		else {
 			if (!mouseIsInLogo) document.body.style.cursor = 'default';
 		}
-	}
 
-	
+		bgIntersects = bgRaycaster.intersectObjects(bgScene.children);
+		//console.log(bgIntersects[0].object.name)
+	}
 
 	
 	function onPointerDown( event ){
 		// the latter is needed to prevent clicking other sprites when 
 		// animation is triggered
-		if (isMobile){
-			pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-			raycaster.setFromCamera( pointer, camera );
-			event.preventDefault;
-			updateRaycaster();
-		}
-		if (intersects.length > 0 && !HyperlinkSprite.animationTriggered && !mouseIsInLogo){
+		if (intersects.length > 0 && !HyperlinkSprite.animationTriggered){
 			let firstIntersectSprite = intersects[0].object;
 			let index = firstIntersectSprite.name;
 			clickedSprite = hyperlinkSpritesArr[index];
@@ -537,42 +570,16 @@ async function main(){
 			// these need to be set so the sprites can 
 			// return to their original position and scale 
 			// when coming back from the details page
-			// clickedSprite.posBeforeTriggered.copy(clickedSprite.posVec);
-			// clickedSprite.scaleBeforeClickTriggered = clickedSprite.scale;
+			clickedSprite.posBeforeTriggered.copy(clickedSprite.posVec);
+			clickedSprite.scaleBeforeClickTriggered = clickedSprite.scale;
 		}
-
-		else if (intersects.length == 0){
-			resetDestPos();
-		}
-
-		//console.log(pointer)
 	}
 	window.addEventListener('pointerdown', onPointerDown);
-
-	function resetDestPos(){
-		for (let i = 0; i < instanceNum; i++){
-			let hyperlinkSprite = hyperlinkSpritesArr[i];
-			let x = map(Math.random(), 0, 1, -posRange, posRange);
-			let y = map(Math.random(), 0, 1, -posRange, posRange);
-			let z = map(Math.random(), 0, 1, -posRange, posRange);
-
-			let scaleCoef = map(Math.random(), 0, 1, 5,  5);
-			
-			hyperlinkSprite.setNewDestPos(new THREE.Vector3(x, y, z));
-		}
-	}
 
 	function onPointerUp(event){
 		controls.enabled = true;
 	}
 	window.addEventListener('pointerup', onPointerUp);
-
-
-	// TOUCH EVENTS
-	function onDocumentTouchStart(event){
-		event.preventDefault();
-		event.clien
-	}
 }
 
 main();
