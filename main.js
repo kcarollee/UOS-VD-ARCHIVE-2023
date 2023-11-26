@@ -317,6 +317,7 @@ async function main(){
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.05;
 	controls.screenSpacePanning = false;
+	controls.enablePan = false;
 	controls.update();
 
 	// SCENE
