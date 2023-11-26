@@ -20,6 +20,36 @@
 
   <script type="module" src="main.js"></script>
   <body>
+
+    <button class="index-button" onclick="toggleNames()">Index</button>
+    
+    <ul id="nameList" class="hidden-list">
+        <li><a href="./students/student_1/index.html" target="_blank">강지현</a></li>
+        <li><a href="./students/student_2/index.html" target="_blank">권나경</a></li>
+        <li><a href="./students/student_3/index.html" target="_blank">권채현</a></li>
+        <li><a href="./students/student_4/index.html" target="_blank">김로영</a></li>
+        <li><a href="./students/student_5/index.html" target="_blank">김민서</a></li>
+        <li><a href="./students/student_6/index.html" target="_blank">김민주</a></li>
+        <li><a href="./students/student_7/index.html" target="_blank">김성희</a></li>
+        <li><a href="./students/student_8/index.html" target="_blank">김승희</a></li>
+        <li><a href="./students/student_9/index.html" target="_blank">김예영</a></li>
+        <li><a href="./students/student_10/index.html" target="_blank">김용규</a></li>
+        <li><a href="./students/student_11/index.html" target="_blank">나미</a></li>
+        <li><a href="./students/student_12/index.html" target="_blank">변민경</a></li>
+        <li><a href="./students/student_13/index.html" target="_blank">박언진</a></li>
+        <li><a href="./students/student_14/index.html" target="_blank">김성현</a></li>
+        <li><a href="./students/student_15/index.html" target="_blank">안지민</a></li>
+        <li><a href="./students/student_16/index.html" target="_blank">오예지</a></li>
+        <li><a href="./students/student_17/index.html" target="_blank">이덕원</a></li>
+        <li><a href="./students/student_18/index.html" target="_blank">이연호</a></li>
+        <li><a href="./students/student_19/index.html" target="_blank">정서윤</a></li>
+        <li><a href="./students/student_20/index.html" target="_blank">이주희</a></li>
+        <li><a href="./students/student_21/index.html" target="_blank">한세흔</a></li>
+        <li><a href="./students/student_22/index.html" target="_blank">황예인</a></li>
+        <li><a href="./students/student_23/index.html" target="_blank">Irene</a></li>
+        <li><a href="./students/student_24/index.html" target="_blank">Maria</a></li>
+        <!-- Add 21 more names as needed -->
+    </ul>
     
     <canvas id="c"></canvas>
     
@@ -57,6 +87,12 @@
           document.getElementById('main-logo-type').style.width = "15%"
           document.body.style.cursor = "default";
           mouseIsInLogo = false;
+        }
+
+        function toggleNames() {
+            const nameList = document.getElementById('nameList');
+            nameList.classList.toggle('animated-list');
+            nameList.style.display = (nameList.style.display === 'none' || nameList.style.display === '') ? 'block' : 'none';
         }
       </script>
   
