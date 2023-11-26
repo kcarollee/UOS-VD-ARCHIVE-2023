@@ -4,30 +4,41 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 
 class HyperlinkSprite{
-	constructor(posVec, destPosVec, spriteTexture, faceTexture, link, index, scale = 1){
+	constructor(posVec, destPosVec, spriteTexture, faceTexture, nameTexture, link, index, scale = 1){
 		this.currentPosVec = posVec;
 		this.destPosVec = destPosVec;
+
 		this.spriteTexture = spriteTexture;
-		this.faceTexture = faceTexture;
+		this.faceSpriteTexture = faceTexture;
+		this.nameSpriteTexture = nameTexture;
+
 		this.link = link;
 		this.scale = scale;
 
 		this.spriteMat = new THREE.SpriteMaterial({map: this.spriteTexture});
-		this.faceMat = new THREE.SpriteMaterial({map: this.faceTexture});
+		this.faceSpriteMat = new THREE.SpriteMaterial({map: this.faceSpriteTexture});
+		this.nameSpriteMat = new THREE.SpriteMaterial({map: this.nameSpriteTexture});
 
 		this.sprite = new THREE.Sprite(this.spriteMat);
 		this.sprite.position.copy(this.currentPosVec);
 		this.sprite.scale.set(this.scale, this.scale, this.scale);
 
 		
-		this.face = new THREE.Sprite(this.faceMat);
-		//this.face.position.copy(this.currentPosVec);
-		this.face.scale.set(this.scale * 0.1, this.scale * 0.1);
+		this.faceSprite = new THREE.Sprite(this.faceSpriteMat);
+		//this.faceSprite.position.copy(this.currentPosVec);
+		this.faceSprite.scale.set(this.scale * 0.1, this.scale * 0.1);
 
-		this.sprite.add(this.face);
+		this.nameSprite = new THREE.Sprite(this.nameSpriteMat);
+		this.nameSprite.scale.set(this.scale *  0.15, this.scale  * 0.15);
+		this.nameSprite.visible = false;
+
+		this.sprite.add(this.faceSprite);
+		this.sprite.add(this.nameSprite);
+
 		this.id = index;
 		this.sprite.name = index;
-		this.face.name = index;
+		this.faceSprite.name = index;
+		this.nameSprite.name = index;
 		// animation triggers 
 		this.clickAnimationTriggered = false;
 		this.centerTranslationTriggered = false;
@@ -45,7 +56,7 @@ class HyperlinkSprite{
 
 	addToScene(scene){
 		scene.add(this.sprite);
-		//scene.add(this.face);
+		//scene.add(this.faceSprite);
 	}
 
 	moveToDest(){
@@ -56,7 +67,7 @@ class HyperlinkSprite{
 			this.currentPosVec.add(destPosVecCopy.sub(this.currentPosVec).multiplyScalar(0.1));
 			
 			this.sprite.position.copy(this.currentPosVec);
-			//this.face.position.copy(this.currentPosVec);
+			//this.faceSprite.position.copy(this.currentPosVec);
 		}
 
 	}
@@ -72,7 +83,7 @@ class HyperlinkSprite{
 			this.currentPosVec.add(centerVec.sub(this.currentPosVec).multiplyScalar(this.translationClock.getElapsedTime() * 0.1));
 			
 			this.sprite.position.copy(this.currentPosVec);
-			this.face.position.set(0, 0, 0);
+			this.faceSprite.position.set(0, 0, 0);
 
 			if (centerVec.distanceTo(this.currentPosVec) < 0.1){
 				this.translationClock.stop();
@@ -90,8 +101,8 @@ class HyperlinkSprite{
 			this.scale += this.scaleUpClock.getElapsedTime() * 2.5;
 			
 			this.sprite.scale.set(this.scale, this.scale);
-			this.face.scale.set(2.5 / this.scale, 2.5 / this.scale);
-			
+			this.faceSprite.scale.set(2.5 / this.scale, 2.5 / this.scale);
+			this.nameSprite.scale.set(3.8 / this.scale, 3.8 / this.scale)
 			if (this.scale > 100) {
 				//this.clickAnimationTriggered = false;
 				this.scaleUpTriggered = false;
@@ -211,16 +222,18 @@ async function main(){
 						mouseLerp[1] = sketch.lerp(mouseLerp[1], sketch.mouseY, mouseLerpCoef);
 					}
 				}
+
 				else {
 					
 					let mode = logoClickCount % 2;
 					//console.log(mode == 1);
-					
+					// sketch moves towards mouse
 					if (mode == 0){
 						sketch.image(bgPic, curPosX, curPosY, bgPic.width * 1, bgPic.height * 1);
 						curPosX = sketch.lerp(curPosX, -bgPic.width, mouseLerpCoef);
 						curPosY = sketch.lerp(curPosY, -bgPic.height, mouseLerpCoef);
 					}
+					// sketch moves outside
 					else if (mode == 1) {
 						sketch.image(bgPic, curPosX, curPosY, bgPic.width * 1, bgPic.height * 1);
 						curPosX = sketch.lerp(curPosX, sketch.mouseX, mouseLerpCoef);
@@ -330,6 +343,13 @@ async function main(){
 		let textureTemp = textureLoader.load(url);
 		faceTextureArr.push(textureTemp); 
 	}
+
+	const nameTextureArr = [];
+	for (let i = 0; i < textureNum; i++){
+		let url = "./assets/names/name (" + (i + 1).toString() + ").png";
+		let textureTemp = textureLoader.load(url);
+		nameTextureArr.push(textureTemp); 
+	}
 	
 	// SPRTIES VER
 	const instanceNum = 24;
@@ -354,6 +374,7 @@ async function main(){
 			new THREE.Vector3(x, y, z), 
 			spriteTextureArr[i],
 			faceTextureArr[i],
+			nameTextureArr[i],
 			'./students/student_' + (i + 1) + '/index.html',
 			i,
 			scaleCoef
@@ -385,6 +406,7 @@ async function main(){
 			// zoom animation for the clicked sprite
 			if (hyperlinkSprite.clickAnimationTriggered){
 				hyperlinkSprite.clickAnimationZoom();
+				hyperlinkSprite.nameSprite.visible = true;
 			}
 
 			// fall back animation for the rest
@@ -404,7 +426,7 @@ async function main(){
 				// don't forget to normalize the pointer vector as well!!!
 				let normalizedDirectionVec = pointerLerp.clone().normalize().sub(normalizedSpriteScreenPosition).normalize();
 				let directionVec = normalizedDirectionVec.multiplyScalar(0.25);
-				hyperlinkSprite.face.position.set(directionVec.x, directionVec.y, 0.001);
+				hyperlinkSprite.faceSprite.position.set(directionVec.x, directionVec.y, 0.001);
 				
 				//console.log(normalizedDirectionVec);
 				// if clickedSprite gets defined upon mouse click
@@ -413,7 +435,8 @@ async function main(){
 					if (clickedSprite.centerTranslationTriggered){
 						if (globalOpacity > 0) globalOpacity -= HyperlinkSprite.opacityClock.getElapsedTime() * 0.01;
 						hyperlinkSprite.sprite.material.opacity = globalOpacity;
-						hyperlinkSprite.face.material.opacity = globalOpacity;
+						hyperlinkSprite.faceSprite.material.opacity = globalOpacity;
+						hyperlinkSprite.nameSprite.material.opacity = globalOpacity;
 					}
 					// if the clicked sprite is moving back to its original pos
 					// if (clickedSprite.scaleDownTriggered){
@@ -490,7 +513,7 @@ async function main(){
 	
 		pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-		console.log(pointer)
+		//console.log(pointer)
 	}
 
 
@@ -502,11 +525,30 @@ async function main(){
 		intersects = raycaster.intersectObjects( scene.children );
 		if (intersects.length > 0){
 			let firstIntersectSprite = intersects[0].object;
+			//console.log(firstIntersectSprite.name);
 			document.body.style.cursor = 'pointer';
+
+			if (!HyperlinkSprite.animationTriggered){
+				hyperlinkSpritesArr[firstIntersectSprite.name].nameSprite.visible = true;
+				for (let i = 0; i < hyperlinkSpritesArr.length; i++){
+					if (i == firstIntersectSprite.name) {
+						hyperlinkSpritesArr[i].faceSprite.position.set(0, 0, 0);
+						hyperlinkSpritesArr[i].nameSprite.visible = true;
+					}
+					else hyperlinkSpritesArr[i].nameSprite.visible = false;
+				}
+			}
+			
 			//console.log(firstIntersectSprite.name);
 		}
 		else {
 			if (!mouseIsInLogo) document.body.style.cursor = 'default';
+			if (!HyperlinkSprite.animationTriggered){
+				for (let i = 0; i < hyperlinkSpritesArr.length; i++){
+					hyperlinkSpritesArr[i].nameSprite.visible = false;
+				}
+			}
+			
 		}
 	}
 
@@ -520,7 +562,6 @@ async function main(){
 			pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 			pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 			raycaster.setFromCamera( pointer, camera );
-			event.preventDefault;
 			updateRaycaster();
 		}
 		if (intersects.length > 0 && !HyperlinkSprite.animationTriggered && !mouseIsInLogo){
@@ -541,11 +582,11 @@ async function main(){
 			// clickedSprite.scaleBeforeClickTriggered = clickedSprite.scale;
 		}
 
-		else if (intersects.length == 0){
+		else if (mouseIsInLogo){
 			resetDestPos();
 		}
 
-		//console.log(pointer)
+		console.log(pointer)
 	}
 	window.addEventListener('pointerdown', onPointerDown);
 
