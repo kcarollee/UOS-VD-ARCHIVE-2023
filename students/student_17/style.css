@@ -1,0 +1,267 @@
+@font-face {
+    font-family: 'SBAggro';
+    font-weight: 300;
+    font-style: normal;
+    src: url('https://cdn.jsdelivr.net/gh/webfontworld/sandbox/SBAggroLight.eot');
+    src: url('https://cdn.jsdelivr.net/gh/webfontworld/sandbox/SBAggroLight.eot?#iefix') format('embedded-opentype'),
+        url('https://cdn.jsdelivr.net/gh/webfontworld/sandbox/SBAggroLight.woff2') format('woff2'),
+        url('https://cdn.jsdelivr.net/gh/webfontworld/sandbox/SBAggroLight.woff') format('woff'),
+        url('https://cdn.jsdelivr.net/gh/webfontworld/sandbox/SBAggroLight.ttf') format("truetype");
+    font-display: swap;
+}
+
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    text-align: center;
+    background: linear-gradient(172deg, rgba(255,240,64,255) 42%, rgba(255,131,88,255) 100%); /* 그라디언트 옵션, 각도 고정시킨 채 rgba 값만 변경해서 사용. 첨부하는 사이트 이용 */
+}
+.name {
+    color: #FF266A; /* 상단 이름 색상 */
+    font-size: 58px;
+    font-family: 'Galmuri7', sans-serif;
+}
+
+
+.eng-name {
+    color: #FF266A;/* 상단 영어 이름 색상 */
+    font-size: 30px;
+    font-family: 'Galmuri7', sans-serif;
+}
+
+
+.fixed-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    width: 100%;
+    padding: 50px 0px;
+}
+
+
+.content-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+    height: calc(100vh - 200px);
+    margin-top: 220px;
+    margin-bottom: 100px;
+    overflow-y: scroll;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 7%, black 90%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 97%, transparent 100%);
+}
+
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+ }
+ 
+
+.image-container {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    height: auto;
+    max-width: 150vw;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    overflow-x: auto;
+    padding-bottom: 0;
+    
+}
+
+
+.image {
+    height: 500px;
+    margin-right: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+.image-map {
+    width: 100%;
+    margin-top: 50px;
+}
+
+.enlarged {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.layout {
+    margin-top: 70px;
+    margin-bottom: 250px;
+    color: #FF266A;
+    min-width: 80%;
+    width: 80%;
+    padding-bottom: 0;
+}
+element.style {
+    padding-bottom: 0px;
+}
+.area {
+    position: relative;
+    display: block;
+    max-width: calc(100vw - 40px);
+    width: 100%;
+    height: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 56.25%;
+    justify-content: center;
+    align-items: center;
+}
+.area iframe {
+    position: absolute;
+    margin-top: 2%;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    width: 100%;
+    height: 100%;
+    left: 0;
+}
+
+/*------------------------------------------------------------------------------------*/
+.title {
+    position: absolute;
+    margin-top: 0px;
+    font-family: 'Galmuri7', sans-serif;
+    font-size: 30px;
+    border-bottom: 3px solid #FF266A; /* 밑줄 색상, 폰트 색상과 맞춰서 변경할 것 */
+    padding-bottom: 10px;
+}
+.class-title {
+    text-align: right;
+    margin-top: 0px;
+    font-family: 'Galmuri7', sans-serif;
+    font-size: 30px;
+    border-bottom: 3px solid #FF266A; /* 밑줄 색상, 폰트 색상과 맞춰서 변경할 것 */
+    padding-bottom: 10px;
+}
+
+.project-title {
+    position: relative;
+    text-align: left;
+    font-family: 'SBAggro';
+    font-size: 20px;
+    font-weight: bolder;
+    margin-bottom: 20px;
+}
+.description {
+    position: relative;
+    text-align: left;
+    font-family: 'SBAggro';
+    font-size: 20px;
+    font-weight: 300;
+    color: #FF266A; /* 개인 설명 텍스트 색상 */
+}
+.map-description {
+    position: absolute;
+    margin-top: 20px;
+    font-family: 'Galmuri7', sans-serif;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.image-description {
+    position: absolute;
+}
+.image-container::-webkit-scrollbar {
+    height: 8px;
+}
+.image-container::-webkit-scrollbar-thumb {
+    background-color: #FF266A;
+    border-radius: 10px;
+}
+/*------------------------------------------------------------------------------------*/
+
+.back {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1;
+    font-size: 52px;
+    color: #FF266A;
+}
+ion-icon {
+    color: #FF266A; /* 뒤로가기 아이콘 색상 */
+  }
+.arrow-up {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 15px solid #FF266A;
+  }
+  
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 170px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 80%;
+}
+
+.close {
+    color: #FF266A; /* 닫기 버튼 색상 */
+    position: absolute;
+    top: 3px;
+    right: 25px;
+    font-size: 58px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.arrow {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 1;
+    color: #FF266A;
+    font-size: 48px; 
+}
+
+.prev {
+    left: 50px; 
+}
+
+.next {
+    right: 50px; 
+}

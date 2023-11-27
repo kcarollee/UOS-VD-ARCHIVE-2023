@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>UOS_VD1&2</title> <!-- 페이지명, 통일해야할듯 -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css"> <!-- 디스플레이용 폰트 -->
+    
+</head>
+
+<body>
+    <div class="fixed-top">
+        <div class="name">한세흔</div>
+        <div class="eng-name">SEHEUN HAN</div>
+    </div>
+    <!-- 화면 상단 이름, 영문이름 항목 -->
+    <div class="back">
+        <a href="../../index.html">
+            <ion-icon name="arrow-back"></ion-icon>
+            <!-- <img src="imgs/Exhi_logo.png" width="120"> -->
+        </a>
+    </div>
+    <!-- 뒤로가기 버튼 -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+        <div class="arrow prev">&lt;</div>
+        <div class="arrow next">&gt;</div>
+    </div>
+    <!-- 이미지 클릭시 확대되는 디비전, 좌우 이동 화살표 및 X -->
+
+    <div class="content-wrapper">
+        <!-- 한 과목 시작 -->
+        <div class="layout">
+            <div class="title">5 PATTERN POSTERS</div> <!-- 프로젝트 이름 -->
+            <div class="class-title">VD2</div> <!-- VD1 / VD2 둘 중 하나 -->
+            <div class="image-container">
+                <img src="imgs/1.png" class="image" alt="이미지 1">
+                <img src="imgs/2..png" class="image" alt="이미지 2">
+                <img src="imgs/3.png" class="image" alt="이미지 3">
+                <img src="imgs/4.png" class="image" alt="이미지 4">
+                <img src="imgs/5.png" class="image" alt="이미지 5">
+                <!-- 이미지 삽입 위치 -->
+            </div>
+            <!-- <div class="project-title">Feel Alive</div> 과제 제목 -->
+            <div class="description">향기에 관심이 많다. 향기에도 저마다의 아이덴티티가 있다고 생각했고, 향기를 내는 모습들을 시각화하였다.</div> <!-- 과제 설명 -->
+            
+        </div>
+        <div class="layout">
+            <div class="title">EXHIBITION IDENTITY</div> <!-- 프로젝트 이름 -->
+            <div class="class-title">VD2</div> <!-- VD1 / VD2 둘 중 하나 -->
+            <div class="image-container">
+                <img src="imgs/1.flag.png" class="image" alt="이미지 1">
+                <img src="imgs/1.logo.jpg" class="image" alt="이미지 2">
+                <img src="imgs/1.sns profile.jpg" class="image" alt="이미지 3">
+                <img src="imgs/2.flag.jpg" class="image" alt="이미지 4">
+                <img src="imgs/2.logo.jpg" class="image" alt="이미지 5">
+                <img src="imgs/2.sns profile.jpg" class="image" alt="이미지 6">
+                <!-- 이미지 삽입 위치 -->
+            </div>
+            <!-- <div class="project-title">Feel Alive</div> 과제 제목 -->
+            <div class="description">#000000은 검정색을 이용해 그래픽적인 느낌을 표현하였고, CD:PLAY는 CD를 이용하여 제작하였다.</div> <!-- 과제 설명 -->
+        </div>
+        <div class="layout">
+            <div class="title">SELF IDENTITY</div> <!-- 프로젝트 이름 -->
+            <div class="class-title">VD2</div> <!-- VD1 / VD2 둘 중 하나 -->
+            <div class="map-description">이 위치로 직접 가서 확인해보세요!</div> <!-- 지도 -->
+            <div class="image-container">
+                <img src="imgs/id_map-20.jpg" class="image-map" alt="이미지 1">
+                <!-- 이미지 삽입 위치 -->
+            </div>
+            <!-- <div class="project-title">aurion</div>  -->
+            <!-- <div class="description">아우리온은 우리의 일상생활에 스며 들어있는 자연스러운 내음을 지향하는 라이프스타일 코스매틱 브랜드이다.</div> 과제 설명 -->
+        </div>
+        <!-- 한 과목 종료, layout이라는 div class 전체를 하단에 복사하면서 반복하면 됨 -->
+        
+        <!-- 위의 레이아웃을 복사하여 세로로 총 네 개의 레이아웃을 만듭니다 -->
+        <!-- 이하 생략 -->
+        
+    </div>
+
+    <!-- 하단은 이미지 모달을 위한 스크립트 태그, 건들 필요 없음 -->
+    <script>
+        // JavaScript 코드
+        // Get the modal
+        const modal = document.getElementById('imageModal');
+        // Get the image and insert it inside the modal
+        const images = document.querySelectorAll('.image, .image-map');
+        const modalImg = document.getElementById('modalImage');
+
+        // 모달 토글 함수
+        function toggleModal(show) {
+            const arrows = document.querySelectorAll('.arrow');
+            arrows.forEach(arrow => {
+                arrow.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // 이미지 클릭 이벤트
+        images.forEach((img) => {
+            img.addEventListener('click', () => {
+                modal.style.display = 'block';
+                modalImg.src = img.src;
+                toggleModal(true); // 모달이 열리면 화살표 보이도록 설정
+            });
+        });
+
+        // 이미지 변경 함수
+        function showPrevImage() {
+            let currentIndex = Array.from(images).findIndex(img => img.src === modalImg.src);
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            modalImg.src = images[currentIndex].src;
+        }
+
+        function showNextImage() {
+            let currentIndex = Array.from(images).findIndex(img => img.src === modalImg.src);
+            currentIndex = (currentIndex + 1) % images.length;
+            modalImg.src = images[currentIndex].src;
+        }
+
+        // 이전, 다음 화살표 클릭 시 이미지 변경
+        const nextArrow = document.querySelector('.next');
+        nextArrow.addEventListener('click', showNextImage);
+
+        const prevArrow = document.querySelector('.prev');
+        prevArrow.addEventListener('click', showPrevImage);
+
+        // 닫기 버튼 및 외부 클릭 이벤트
+        const span = document.getElementsByClassName('close')[0];
+        span.addEventListener('click', () => {
+            modal.style.display = 'none';
+            toggleModal(false); // 모달이 닫히면 화살표 숨기도록 설정
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                toggleModal(false); // 모달이 닫히면 화살표 숨기도록 설정
+            }
+        });
+    </script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

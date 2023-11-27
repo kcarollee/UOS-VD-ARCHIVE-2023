@@ -261,7 +261,7 @@ async function main(){
 
 		sketch.windowResized = async () => {
 			sketch.clear();
-			console.log(sketch.windowWidth, sketch.windowHeight);
+			//console.log(sketch.windowWidth, sketch.windowHeight);
 			sketch.resizeCanvas(sketch.windowWidth, sketch.windowHeight);
 			p5Texture.dispose();
 			//p5Texture = new THREE.CanvasTexture(p5Canvas.canvas);
@@ -301,7 +301,9 @@ async function main(){
 	const near = 0.1;
 	const far = 1000;
 
-	const frustumSize = 20;
+	let frustumSize = 20;
+	if (isMobile) frustumSize = 40;
+	
 	let oaspect = window.innerWidth / window.innerHeight;
 
 	const camera = new THREE.OrthographicCamera(frustumSize * oaspect / - 2, frustumSize * oaspect / 2, frustumSize / 2, frustumSize / - 2, 0.1, 100);
@@ -587,7 +589,7 @@ async function main(){
 			resetDestPos();
 		}
 
-		console.log(pointer)
+		//console.log(pointer)
 	}
 	window.addEventListener('pointerdown', onPointerDown);
 

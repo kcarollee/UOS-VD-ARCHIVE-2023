@@ -21,17 +21,21 @@ body {
     width: 100%;
     height: 100vh;
     text-align: center;
-    background: linear-gradient(172deg, rgba(133, 192, 255, 1) 42%, rgba(255, 255, 255, 1) 100%); /* 그라디언트 옵션, 각도 고정시킨 채 rgba 값만 변경해서 사용. 첨부하는 사이트 이용 */
+    background: linear-gradient(172deg, rgba(223, 38, 248, 255) 42%, rgba(100, 183, 223, 255) 100%);
+    /* 그라디언트 옵션, 각도 고정시킨 채 rgba 값만 변경해서 사용. 첨부하는 사이트 이용 */
 }
+
 .name {
-    color: #28FFD2; /* 상단 이름 색상 */
+    color: #28FFD2;
+    /* 상단 이름 색상 */
     font-size: 58px;
     font-family: 'Galmuri7', sans-serif;
 }
 
 
 .eng-name {
-    color: #28FFD2;/* 상단 영어 이름 색상 */
+    color: #28FFD2;
+    /* 상단 영어 이름 색상 */
     font-size: 30px;
     font-family: 'Galmuri7', sans-serif;
 }
@@ -66,8 +70,8 @@ body {
 ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
- }
- 
+}
+
 
 .image-container {
     position: relative;
@@ -82,7 +86,7 @@ body {
     margin-bottom: 30px;
     overflow-x: auto;
     padding-bottom: 0;
-    
+
 }
 
 
@@ -93,6 +97,7 @@ body {
     margin-bottom: 20px;
     transition: transform 0.3s ease;
 }
+
 .image-map {
     width: 100%;
     margin-top: 50px;
@@ -120,9 +125,11 @@ body {
     width: 80%;
     padding-bottom: 0;
 }
+
 element.style {
     padding-bottom: 0px;
 }
+
 .area {
     position: relative;
     display: block;
@@ -135,6 +142,7 @@ element.style {
     justify-content: center;
     align-items: center;
 }
+
 .area iframe {
     position: absolute;
     margin-top: 2%;
@@ -151,15 +159,18 @@ element.style {
     margin-top: 0px;
     font-family: 'Galmuri7', sans-serif;
     font-size: 30px;
-    border-bottom: 3px solid #28FFD2; /* 밑줄 색상, 폰트 색상과 맞춰서 변경할 것 */
+    border-bottom: 3px solid #28FFD2;
+    /* 밑줄 색상, 폰트 색상과 맞춰서 변경할 것 */
     padding-bottom: 10px;
 }
+
 .class-title {
     text-align: right;
     margin-top: 0px;
     font-family: 'Galmuri7', sans-serif;
     font-size: 30px;
-    border-bottom: 3px solid #28FFD2; /* 밑줄 색상, 폰트 색상과 맞춰서 변경할 것 */
+    border-bottom: 3px solid #28FFD2;
+    /* 밑줄 색상, 폰트 색상과 맞춰서 변경할 것 */
     padding-bottom: 10px;
 }
 
@@ -171,14 +182,17 @@ element.style {
     font-weight: bolder;
     margin-bottom: 20px;
 }
+
 .description {
     position: relative;
     text-align: left;
     font-family: 'SBAggro';
     font-size: 20px;
     font-weight: 300;
-    color: #28FFD2; /* 개인 설명 텍스트 색상 */
+    color: #28FFD2;
+    /* 개인 설명 텍스트 색상 */
 }
+
 .map-description {
     position: absolute;
     margin-top: 20px;
@@ -190,13 +204,16 @@ element.style {
 .image-description {
     position: absolute;
 }
+
 .image-container::-webkit-scrollbar {
     height: 8px;
 }
+
 .image-container::-webkit-scrollbar-thumb {
     background-color: #28FFD2;
     border-radius: 10px;
 }
+
 /*------------------------------------------------------------------------------------*/
 
 .back {
@@ -207,18 +224,21 @@ element.style {
     font-size: 52px;
     color: #28FFD2;
 }
+
 ion-icon {
-    color: #28FFD2; /* 뒤로가기 아이콘 색상 */
-  }
+    color: #28FFD2;
+    /* 뒤로가기 아이콘 색상 */
+}
+
 .arrow-up {
     width: 0;
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     border-bottom: 15px solid #28FFD2;
-  }
-  
-  .modal {
+}
+
+.modal {
     display: none;
     position: fixed;
     z-index: 1;
@@ -239,7 +259,8 @@ ion-icon {
 }
 
 .close {
-    color: #28FFD2; /* 닫기 버튼 색상 */
+    color: #28FFD2;
+    /* 닫기 버튼 색상 */
     position: absolute;
     top: 3px;
     right: 25px;
@@ -255,13 +276,13 @@ ion-icon {
     cursor: pointer;
     z-index: 1;
     color: #28FFD2;
-    font-size: 48px; 
+    font-size: 48px;
 }
 
 .prev {
-    left: 50px; 
+    left: 50px;
 }
 
 .next {
-    right: 50px; 
+    right: 50px;
 }
